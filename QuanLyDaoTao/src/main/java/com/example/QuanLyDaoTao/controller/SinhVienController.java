@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/sinhvien")
-@CrossOrigin
+@CrossOrigin("*")
 public class SinhVienController {
 
     @Autowired
@@ -16,7 +16,6 @@ public class SinhVienController {
 
     @GetMapping("/{maSV}")
     public SinhVien getThongTinSinhVien(@PathVariable String maSV) {
-
         return sinhVienRepository.findById(maSV).orElse(null);
     }
 
