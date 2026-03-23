@@ -1,336 +1,70 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - PTIT Student</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; display: flex; height: 100vh;}
-
-        .sidebar {
-            width: 250px;
-            background-color: #cc0000;
-            color: white;
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            border-bottom: 1px solid #ff4d4d;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .menu-item {
-            padding: 15px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
-        }
-
-        .menu-item:hover, .menu-item.active {
-            background-color: #aa0000;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .box {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        h2.section-title { color: #cc0000; border-bottom: 2px solid #cc0000; padding-bottom: 10px; margin-top: 0;}
-
-        .info { margin: 15px 0; font-size: 18px; }
-        .label { font-weight: bold; color: #555; display: inline-block; width: 120px;}
-
-        button.logout-btn {
-            background: #333;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: auto;
-            margin-bottom: 20px;
-            align-self: center;
-            width: 80%;
-        }
-        button.logout-btn:hover { background: #555; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; color: #cc0000; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .highlight-money {
-            font-size: 24px;
-            font-weight: bold;
-            color: #cc0000;
-        }
-
-        .grade-A { color: green; font-weight: bold; }
-        .grade-B { color: blue; font-weight: bold; }
-        .grade-C { color: orange; font-weight: bold; }
-        .grade-D { color: #d1b200; font-weight: bold; }
-        .grade-F { color: red; font-weight: bold; }
-    </style>
+  <meta charset="UTF-8">
+  <title>PTIT Academic - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root { --ptit-red: #bb0000; --sidebar-bg: #2c3e50; }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background: #f0f2f5; height: 100vh; }
+    .sidebar { width: 250px; background: var(--sidebar-bg); color: white; flex-shrink: 0; display: flex; flex-direction: column; }
+    .menu { list-style: none; padding: 0; margin: 0; }
+    .menu li { padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+    .menu li:hover { background: var(--ptit-red); }
+    .main-content { flex-grow: 1; padding: 25px; overflow-y: auto; }
+    .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  </style>
 </head>
 <body>
-
 <div class="sidebar">
-    <h2>PTIT Portal</h2>
-    <div class="menu-item active" onclick="switchTab('trangchu')">Trang chủ</div>
-    <div class="menu-item" onclick="switchTab('dangky')">Đăng ký môn học</div>
-    <div class="menu-item" onclick="switchTab('hocphi')">Tra cứu học phí</div>
-    <div class="menu-item" onclick="switchTab('ketqua')">Kết quả học tập</div>
-    <button class="logout-btn" onclick="localStorage.clear(); window.location.href='login.html'">Đăng xuất</button>
+  <div style="padding:25px; text-align:center; font-weight:bold; font-size: 1.2rem;">PTIT ACADEMIC</div>
+  <ul class="menu">
+    <li onclick="location.href='dashboard.html'"><i class="fa-solid fa-house"></i> Trang chủ</li>
+    <li onclick="location.href='dang-ky.html'"><i class="fa-solid fa-pen"></i> Đăng ký môn học</li>
+    <li onclick="location.href='hoc-phi.html'"><i class="fa-solid fa-wallet"></i> Tra cứu học phí</li>
+    <li onclick="location.href='ket-qua.html'"><i class="fa-solid fa-graduation-cap"></i> Kết quả học tập</li>
+    <li onclick="localStorage.clear(); location.href='login.html'" style="color: #ff9999;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</li>
+  </ul>
 </div>
-
 <div class="main-content">
-
-    <div id="tab-trangchu" class="tab-content active">
-        <div class="box">
-            <h2 class="section-title">Thông Tin Sinh Viên</h2>
-            <div id="thongtin-content">Đang tải dữ liệu...</div>
-        </div>
-
-        <div class="box">
-            <h2 class="section-title">Thời Khóa Biểu Tuần Này</h2>
-            <table id="tkbTable">
-                <thead>
-                    <tr>
-                        <th>Môn học</th>
-                        <th>Giảng viên</th>
-                        <th>Nhóm</th>
-                        <th>Thứ</th>
-                        <th>Tiết bắt đầu</th>
-                        <th>Số tiết</th>
-                        <th>Thời gian học</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="7" style="text-align: center;">Đang tải dữ liệu...</td></tr>
-                </tbody>
-            </table>
-        </div>
+  <h2>Xin chào, <span id="user-name">Đang tải...</span></h2>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="card">
+      <h3><i class="fa-solid fa-id-card"></i> Thông tin sinh viên</h3>
+      <p>Mã SV: <b id="user-msv">---</b></p>
+      <p>Lớp: <b id="user-lop">---</b></p>
+      <p>Ngành: <b id="user-nganh">---</b></p>
     </div>
-
-    <div id="tab-dangky" class="tab-content">
-        <div class="box">
-            <h2 class="section-title" id="title-dangky">Đăng ký môn học</h2>
-            <table id="dangkyTable">
-                <thead>
-                    <tr>
-                        <th>Mã môn</th>
-                        <th>Tên môn</th>
-                        <th>Số tín chỉ</th>
-                        <th>Giảng viên</th>
-                        <th>Nhóm</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="5" style="text-align: center;">Đang tải dữ liệu...</td></tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="card">
+      <h3><i class="fa-solid fa-money-bill-wave"></i> Học phí học kỳ này</h3>
+      <h2 id="user-hp" style="color:var(--ptit-red)">0 VNĐ</h2>
+      <p id="hp-ky">---</p>
     </div>
-
-    <div id="tab-hocphi" class="tab-content">
-        <div class="box" style="text-align: center; padding: 40px;">
-            <h2 class="section-title" style="text-align: left;">Tra cứu học phí</h2>
-            <div style="margin: 20px 0; font-size: 20px;" id="hp-hocky">Học kỳ: Đang tải...</div>
-            <div style="font-size: 20px;">Tổng số tín chỉ: <span id="hp-tinchi" style="font-weight: bold;">0</span></div>
-            <div style="margin-top: 20px; font-size: 20px;">
-                Số tiền phải nộp: <br>
-                <div class="highlight-money" id="hp-sotien" style="margin-top: 10px;">0 VNĐ</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-ketqua" class="tab-content">
-        <div class="box">
-            <h2 class="section-title">Kết quả học tập</h2>
-            <table id="ketquaTable">
-                <thead>
-                    <tr>
-                        <th>Mã MH</th>
-                        <th>Tên môn học</th>
-                        <th>Số tín chỉ</th>
-                        <th>Học kỳ</th>
-                        <th>Điểm thi</th>
-                        <th>TK (10)</th>
-                        <th>TK (4)</th>
-                        <th>TK (Chữ)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="8" style="text-align: center;">Đang tải dữ liệu...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+  </div>
 </div>
-
 <script>
-    const maSV = localStorage.getItem('maSV_Phuc');
-    let hoTenSV = "";
-    if (!maSV) window.location.href = 'login.html';
-
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-    }
-
-    function getGradeClass(grade) {
-        if (!grade) return '';
-        if (grade.includes('A')) return 'grade-A';
-        if (grade.includes('B')) return 'grade-B';
-        if (grade.includes('C')) return 'grade-C';
-        if (grade.includes('D')) return 'grade-D';
-        if (grade.includes('F')) return 'grade-F';
-        return '';
-    }
-
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-
-        document.getElementById('tab-' + tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
-
-        if(tabId === 'dangky') loadDangKy();
-        if(tabId === 'hocphi') loadHocPhi();
-        if(tabId === 'ketqua') loadKetQua();
-    }
+  window.onload = function() {
+    const maSV = localStorage.getItem('maSVHienTai');
+    if(!maSV) { location.href = 'login.html'; return; }
 
     fetch(`http://localhost:8080/api/sinhvien/${maSV}`)
-        .then(res => res.json())
-        .then(data => {
-            hoTenSV = data.hoTen;
-            document.getElementById('thongtin-content').innerHTML = `
-                    <div class="info"><span class="label">Họ tên:</span> ${data.hoTen}</div>
-                    <div class="info"><span class="label">Mã SV:</span> ${data.maSV}</div>
-                    <div class="info"><span class="label">Ngày sinh:</span> ${data.ngaySinh}</div>
-                    <div class="info"><span class="label">Lớp:</span> ${data.lop || 'N/A'}</div>
-                    <div class="info"><span class="label">Ngành:</span> ${data.nganh || 'N/A'}</div>
-                    <div class="info"><span class="label">Quê quán:</span> ${data.noiSinh}</div>
-                `;
-            document.getElementById('title-dangky').innerText = `${hoTenSV} - Đang tải...`;
-        })
-        .catch(err => {
-            document.getElementById('thongtin-content').innerHTML = `<div style="color:red">Không thể tải thông tin sinh viên</div>`;
-        });
-
-    fetch(`http://localhost:8080/api/tkb/${maSV}`)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.querySelector('#tkbTable tbody');
-            if (data && data.length > 0) {
-                tbody.innerHTML = '';
-                data.forEach(tkb => {
-                    const lhp = tkb.lopHocPhan || {};
-                    const mh = lhp.monHoc || {};
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${mh.tenMon || 'N/A'} (${mh.maMon || 'N/A'})</td>
-                            <td>${lhp.giangVien || 'N/A'}</td>
-                            <td>${lhp.nhom || 'N/A'}</td>
-                            <td>Thứ ${tkb.thu}</td>
-                            <td>${tkb.tietBatDau}</td>
-                            <td>${tkb.soTiet}</td>
-                            <td>${tkb.thoiGianHoc || 'N/A'}</td>
-                        </tr>
-                    `;
-                });
-            } else {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Chưa có dữ liệu thời khóa biểu</td></tr>`;
-            }
-        });
-
-    function loadDangKy() {
-        fetch(`http://localhost:8080/api/dashboard/dangky/${maSV}`)
             .then(res => res.json())
             .then(data => {
-                const tbody = document.querySelector('#dangkyTable tbody');
-                document.getElementById('title-dangky').innerText = `${hoTenSV} - [${data.length}] môn đã đăng ký`;
-
-                if (data && data.length > 0) {
-                    tbody.innerHTML = '';
-                    data.forEach(dk => {
-                        const lhp = dk.lopHocPhan || {};
-                        const mh = lhp.monHoc || {};
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${mh.maMon || 'N/A'}</td>
-                                <td>${mh.tenMon || 'N/A'}</td>
-                                <td>${mh.soTinChi || 'N/A'}</td>
-                                <td>${lhp.giangVien || 'N/A'}</td>
-                                <td>${lhp.nhom || 'N/A'}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Chưa đăng ký môn học nào</td></tr>`;
-                }
+              document.getElementById('user-name').innerText = data.hoTen;
+              document.getElementById('user-msv').innerText = data.maSV;
+              document.getElementById('user-lop').innerText = data.lop;
+              document.getElementById('user-nganh').innerText = data.nganh;
             });
-    }
 
-    function loadHocPhi() {
-        fetch(`http://localhost:8080/api/dashboard/hocphi/${maSV}`)
+    fetch(`http://localhost:8080/api/hoc-phi/${maSV}`)
             .then(res => res.json())
             .then(data => {
-                document.getElementById('hp-hocky').innerText = `Học kỳ: ${data.hocKy}`;
-                document.getElementById('hp-tinchi').innerText = data.tongTinChi;
-                document.getElementById('hp-sotien').innerText = formatCurrency(data.soTienPhaiNop);
-            })
-            .catch(err => {
-                document.getElementById('hp-sotien').innerText = "Lỗi tải dữ liệu";
+              if(data) {
+                document.getElementById('user-hp').innerText = data.soTienPhaiNop.toLocaleString() + " VNĐ";
+                document.getElementById('hp-ky').innerText = data.hocKy;
+              }
             });
-    }
-
-    function loadKetQua() {
-        fetch(`http://localhost:8080/api/dashboard/ketqua/${maSV}`)
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.querySelector('#ketquaTable tbody');
-                if (data && data.length > 0) {
-                    tbody.innerHTML = '';
-                    data.forEach(kq => {
-                        const mh = kq.monHoc || {};
-                        const diemChu = kq.diemTkChu || '';
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${mh.maMon || 'N/A'}</td>
-                                <td>${mh.tenMon || 'N/A'}</td>
-                                <td>${mh.soTinChi || 'N/A'}</td>
-                                <td>${kq.hocKy || 'N/A'}</td>
-                                <td>${kq.diemThi || 'N/A'}</td>
-                                <td>${kq.diemTk10 || 'N/A'}</td>
-                                <td>${kq.diemTk4 || 'N/A'}</td>
-                                <td class="${getGradeClass(diemChu)}">${diemChu}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">Chưa có dữ liệu điểm</td></tr>`;
-                }
-            });
-    }
+  }
 </script>
 </body>
 </html>

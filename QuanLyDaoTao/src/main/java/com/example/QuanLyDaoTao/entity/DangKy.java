@@ -10,13 +10,19 @@ public class DangKy {
     @Column(name = "id_dang_ky")
     private Integer idDangKy;
 
+    // PHẢI THÊM DÒNG NÀY: Để Repository tìm được theo tên "maSv"
+    @Column(name = "ma_sv")
+    private String maSv;
+
     @ManyToOne
-    @JoinColumn(name = "ma_sv")
+    @JoinColumn(name = "ma_sv", insertable = false, updatable = false)
     private SinhVien sinhVien;
 
     @ManyToOne
     @JoinColumn(name = "id_lop")
     private LopHocPhan lopHocPhan;
+
+    // --- GETTER VÀ SETTER (Viết đầy đủ cho bạn dễ nhìn) ---
 
     public Integer getIdDangKy() {
         return idDangKy;
@@ -24,6 +30,14 @@ public class DangKy {
 
     public void setIdDangKy(Integer idDangKy) {
         this.idDangKy = idDangKy;
+    }
+
+    public String getMaSv() {
+        return maSv;
+    }
+
+    public void setMaSv(String maSv) {
+        this.maSv = maSv;
     }
 
     public SinhVien getSinhVien() {

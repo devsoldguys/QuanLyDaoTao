@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký môn học - PTIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --ptit-red: #bb0000; --sidebar-bg: #2c3e50; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background: #f0f2f5; height: 100vh; }
+        .sidebar { width: 250px; background: var(--sidebar-bg); color: white; flex-shrink: 0; }
+        .sidebar-header { padding: 25px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.2); }
+        .menu { list-style: none; padding: 0; margin: 0; }
+        .menu li { padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .menu li:hover { background: var(--ptit-red); }
+        .main-content { flex-grow: 1; padding: 25px; overflow-y: auto; }
+        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #f8f9fa; padding: 12px; text-align: left; border-bottom: 2px solid #ddd; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .btn-dk { background: #bb0000; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-dk:hover { background: #880000; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-header">PTIT ACADEMIC</div>
+    <ul class="menu">
+        <li onclick="location.href='dashboard.html'"><i class="fa-solid fa-house"></i> Trang chủ</li>
+        <li onclick="location.href='dang-ky.html'"><i class="fa-solid fa-pen"></i> Đăng ký môn học</li>
+        <li onclick="location.href='hoc-phi.html'"><i class="fa-solid fa-wallet"></i> Tra cứu học phí</li>
+        <li onclick="location.href='ket-qua.html'"><i class="fa-solid fa-graduation-cap"></i> Kết quả học tập</li>
+        <li onclick="localStorage.clear(); location.href='login.html'" style="color:#ff9999"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</li>
+    </ul>
+</div>
+<div class="main-content">
+    <div class="card">
+        <h2 style="color:var(--ptit-red)">DANH SÁCH LỚP HỌC PHẦN MỞ ĐĂNG KÝ</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Mã Môn</th>
+                <th>Nhóm</th>
+                <th>Giảng Viên</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody id="ds-lop"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    window.onload = function() {
+        fetch('http://localhost:8080/api/lop-hoc-phan/all')
+            .then(res => res.json())
+            .then(data => {
+                let html = '';
+                data.forEach(lop => {
+                    html += `<tr>
+                            <td>${lop.maMon}</td>
+                            <td>${lop.nhom}</td>
+                            <td>${lop.giangVien}</td>
+                            <td><button class="btn-dk" onclick="dangKy(${lop.idLop})">Đăng ký</button></td>
+                        </tr>`;
+                });
+                document.getElementById('ds-lop').innerHTML = html;
+            });
+    };
+    function dangKy(idLop) {
+        const maSV = localStorage.getItem('maSVHienTai');
+        fetch('http://localhost:8080/api/dang-ky', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ maSv: maSV, idLop: idLop })
+        }).then(() => alert("Đã gửi yêu cầu đăng ký!"));
+    }
+</script>
+</body>
+</html>
