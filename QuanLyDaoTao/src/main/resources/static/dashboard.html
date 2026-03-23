@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - PTIT Student</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 50px; }
+        .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 800px; margin: auto; margin-bottom: 20px; }
+        h2 { color: #cc0000; border-bottom: 2px solid #cc0000; padding-bottom: 10px; }
+        .info { margin: 15px 0; font-size: 18px; }
+        .label { font-weight: bold; color: #555; }
+        button { background: #cc0000; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #aa0000; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; color: #cc0000; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Thông Tin Cá Nhân</h2>
+    <div id="content">Đang tải dữ liệu...</div>
+</div>
+
+<div class="box">
+    <h2>Thời Khóa Biểu</h2>
+    <table id="tkbTable">
+        <thead>
+            <tr>
+                <th>Môn học</th>
+                <th>Giảng viên</th>
+                <th>Nhóm</th>
+                <th>Thứ</th>
+                <th>Tiết bắt đầu</th>
+                <th>Số tiết</th>
+                <th>Thời gian học</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="7" style="text-align: center;">Đang tải dữ liệu...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="text-align: center;">
+    <button onclick="localStorage.clear(); window.location.href='login.html'">Đăng xuất</button>
+</div>
+
+<script>
+    const maSV = localStorage.getItem('maSV_Phuc');
+    if (!maSV) window.location.href = 'login.html';
+
+    fetch(`http://localhost:8080/api/sinhvien/${maSV}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('content').innerHTML = `
+                    <div class="info"><span class="label">Họ tên:</span> ${data.hoTen}</div>
+                    <div class="info"><span class="label">Mã SV:</span> ${data.maSV}</div>
+                    <div class="info"><span class="label">Ngày sinh:</span> ${data.ngaySinh}</div>
+                    <div class="info"><span class="label">Lớp:</span> ${data.lop || 'N/A'}</div>
+                    <div class="info"><span class="label">Ngành:</span> ${data.nganh || 'N/A'}</div>
+                    <div class="info"><span class="label">Quê quán:</span> ${data.noiSinh}</div>
+                `;
+        })
+        .catch(err => {
+            console.error("Lỗi khi tải thông tin sinh viên", err);
+            document.getElementById('content').innerHTML = `<div style="color:red">Không thể tải thông tin sinh viên</div>`;
+        });
+
+    fetch(`http://localhost:8080/api/tkb/${maSV}`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#tkbTable tbody');
+            if (data && data.length > 0) {
+                tbody.innerHTML = '';
+                data.forEach(tkb => {
+                    const lhp = tkb.lopHocPhan || {};
+                    const mh = lhp.monHoc || {};
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${mh.tenMon || 'N/A'} (${mh.maMon || 'N/A'})</td>
+                        <td>${lhp.giangVien || 'N/A'}</td>
+                        <td>${lhp.nhom || 'N/A'}</td>
+                        <td>Thứ ${tkb.thu}</td>
+                        <td>${tkb.tietBatDau}</td>
+                        <td>${tkb.soTiet}</td>
+                        <td>${tkb.thoiGianHoc || 'N/A'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Chưa có dữ liệu thời khóa biểu</td></tr>`;
+            }
+        })
+        .catch(err => {
+            console.error("Lỗi khi tải thời khóa biểu", err);
+            document.querySelector('#tkbTable tbody').innerHTML = `<tr><td colspan="7" style="color:red; text-align: center;">Không thể tải thời khóa biểu</td></tr>`;
+        });
+</script>
+</body>
+</html>
